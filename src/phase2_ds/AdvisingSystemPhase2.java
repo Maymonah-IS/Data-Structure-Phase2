@@ -430,9 +430,9 @@ public boolean deleteStudent(int studentId)
     persons.update(advisorId, advisorPerson);
 
     // create and store meeting event
-    IMeeting meeting = new Meeting(event_counter++, timeSlot,
-    ((Advisor) advisorPerson).getOffice(),
-            advisorId, studentId);//kk add constructor or change parameters
+     IMeeting meeting = new Meeting(event_counter++, timeSlot,
+             ((Advisor) advisorPerson).getOffice(),
+             advisorId, studentId);
 
     events.insert(meeting.getId(), meeting);
 
@@ -542,37 +542,7 @@ public int scheduleWorkshop(String title, ITimeSlot timeSlot, int locationId,
 
     return workshop.getId();
 }
-
-        @Override
-        public boolean cancelMeeting(int meetingId) {
-            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        }
-
-        @Override
-        public boolean cancelWorkshop(int workshopId) {
-            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        }
-
-        @Override
-        public void addStudentToWorkshop(int workshopId, int studentId) throws SchedulingException {
-            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        }
-
-        @Override
-        public void removeStudentFromWorkshop(int workshopId, int studentId) throws SchedulingException {
-            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        }
-
-        @Override
-        public void addAdvisorToWorkshop(int workshopId, int advisorId) throws SchedulingException {
-            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        }
-
-        @Override
-        public void removeAdvisorFromWorkshop(int workshopId, int advisorId) throws SchedulingException {
-            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        }
-	}
+	
 //-----------------------------------
 	
 // Cancels a meeting using its ID.
@@ -581,6 +551,7 @@ public int scheduleWorkshop(String title, ITimeSlot timeSlot, int locationId,
 // @return true if the meeting was cancelled successfully,
 // otherwise returns false
 
+@Override
 public boolean cancelMeeting(int meetingId)
 {
     IMeeting meetingObject = (Meeting) events.get(meetingId);
@@ -666,7 +637,7 @@ public boolean cancelWorkshop(int workshopId)
 
     return true;
 }
-	}
+	
 //--------------------------------------------
 		// Adds a student to an existing workshop.
 //
@@ -717,7 +688,7 @@ public void addStudentToWorkshop(int workshopId, int studentId)
     events.update(workshopId, workshopEvent);
 }
 		
-	}
+	
 
 
 		// Removes a student from a workshop.
@@ -849,4 +820,3 @@ public void removeAdvisorFromWorkshop(int workshopId, int advisorId)
 }
 
 }
-

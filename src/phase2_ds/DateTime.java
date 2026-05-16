@@ -1,3 +1,4 @@
+
 package phase2_ds;
 
 
@@ -47,13 +48,13 @@ public class DateTime implements IDateTime {
         if (month < 1 || month > 12)
             this.month = 1;
 
-}
+
         this.day = days;
         if (this.day >31  || this.day < 1)
             this.day = 1;
 
         this.hour = hours;
-        if (this.hour < 0 || this.hour > 23))
+        if (this.hour < 0 || this.hour > 23)
             this.hour = 0;
 
         this.minute = minutes;

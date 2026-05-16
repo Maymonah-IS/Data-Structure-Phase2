@@ -79,7 +79,7 @@ public boolean insert(K key, T data)
 {
     if (root == null)
     {
-        BSTMapNode<K, T> curr = root = new BSTMapNode<K, T>(key, data);
+        BSTMapNode<K, T> current = root = new BSTMapNode<K, T>(key, data);
         count++;
         return true;
     }
@@ -112,7 +112,7 @@ public boolean insert(K key, T data)
     else
         qBSTNode.right = newNode;
 
-    curr = newNode;
+    current = newNode;
     count++;
 
     return true;
@@ -304,4 +304,5 @@ public void private_getKeys(BSTMapNode<K, T> node, List<K> keys)
     keys.insert(node.key);
 
     private_getKeys(node.right, keys);
+}
 }
