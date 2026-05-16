@@ -79,7 +79,7 @@ public boolean insert(K key, T data)
 {
     if (root == null)
     {
-        curr = root = new BSTMapNode<K, T>(key, data);
+        BSTMapNode<K, T> curr = root = new BSTMapNode<K, T>(key, data);
         count++;
         return true;
     }
