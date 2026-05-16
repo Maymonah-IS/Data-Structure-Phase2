@@ -19,7 +19,7 @@ public class Schedule implements ISchedule {
 
     @Override
     public boolean empty() {
-        return timesIDs.empty();
+        return IDs.empty();
     }
 
     /**
@@ -55,14 +55,10 @@ public class Schedule implements ISchedule {
             return false;
         }
 
-        boolean insertedTime = timesIDs.insert(timeSlot, eventId);
-
-        if (!insertedTime) {
-            return false;
-        }
-
         IDs.insert(eventId);
         newIDs.insert(eventId, timeSlot);
+
+        timesIDs.insert(timeSlot, eventId);
 
         return true;
     }
@@ -80,11 +76,15 @@ public class Schedule implements ISchedule {
         if (!IDs.contains(eventId)) {
             return false;
         }
+
         ITimeSlot timeSlot = newIDs.get(eventId);
 
         IDs.remove(eventId);
         newIDs.remove(eventId);
-        timesIDs.remove(timeSlot);
+
+        if (timeSlot != null) {
+            timesIDs.remove(timeSlot);
+        }
 
         return true;
     }
@@ -105,7 +105,7 @@ public class Schedule implements ISchedule {
     @Override
     public boolean conflicts(ITimeSlot timeSlot) {
 
-        List<ITimeSlot> keys = timesIDs.getKeys();
+        List<Integer> keys = IDs.getKeys();
 
         if (keys.empty()) {
             return false;
@@ -115,9 +115,10 @@ public class Schedule implements ISchedule {
 
         while (true) {
 
-            ITimeSlot current = keys.retrieve();
+            int eventId = keys.retrieve();
+            ITimeSlot current = newIDs.get(eventId);
 
-            if (current.compareTo(timeSlot) == 0) {
+            if (current != null && current.compareTo(timeSlot) == 0) {
                 return true;
             }
 
