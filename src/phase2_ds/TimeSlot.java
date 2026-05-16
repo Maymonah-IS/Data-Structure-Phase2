@@ -1,22 +1,15 @@
 package phase2_ds;
 
-
-
- //Represents a time interval using a start and end date/time.
- // Intervals are considered half-open: [start, end)
-
+//Represents a time interval using a start and end date/time.
+// Intervals are considered half-open: [start, end)
 public class TimeSlot implements ITimeSlot {
 
     IDateTime startTime;
     IDateTime endTime;
 
     public TimeSlot(IDateTime start, IDateTime end) {
-
-        this.startTime = new DateTime(start.getYear(), start.getMonth(),
-                start.getDay(), start.getHour(), start.getMinute());
-
-        this.endTime = new DateTime(end.getYear(), end.getMonth(),
-                end.getDay(), end.getHour(), end.getMinute());
+        this.startTime = start;
+        this.endTime = end;
     }
 
     /**
@@ -43,9 +36,9 @@ public class TimeSlot implements ITimeSlot {
     @Override
     public int compareTo(ITimeSlot other) {
 
-        if (this.endTime.compareTo(other.getStart()) < 0) {
+        if (this.endTime.compareTo(other.getStart()) <= 0) {
             return -1;
-        } else if (this.startTime.compareTo(other.getEnd()) > 0) {
+        } else if (this.startTime.compareTo(other.getEnd()) >= 0) {
             return 1;
         }
 
