@@ -18,6 +18,10 @@ public class Meeting extends Event implements IMeeting{
         this.advisorId = advisorId;
         this.studentId = studentId;
     }
+
+    Meeting(int i, ITimeSlot timeSlot, ILocation office, int advisorId, int studentId) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
     
     @Override
     public int getAdvisorId() {
