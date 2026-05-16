@@ -54,8 +54,6 @@ public class DateTime implements IDateTime {
             this.day = 1;
 
         this.hour = hours;
-        if (this.hour < 0 || this.hour > 23)
-            this.hour = 0;
 
         this.minute = minutes;
         if (this.minute > 59  || this.minute < 0)
