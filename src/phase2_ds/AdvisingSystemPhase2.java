@@ -3,14 +3,16 @@ package phase2_ds;
 public class AdvisingSystemPhase2 implements IAdvisingSystemPhase2 {
 
     Map<Integer, ILocation> locations;
-    Map<Integer, IPerson> persons;
+    Map<Integer, IAdvisor> advisors;
+    Map<Integer, IStudent> students;
     Map<Integer, IEvent> events;
 
     static int event_counter = 10000;
 
     public AdvisingSystemPhase2() {
         locations = new BSTMap<Integer, ILocation>();
-        persons = new BSTMap<Integer, IPerson>();
+        advisors = new BSTMap<Integer, IAdvisor>();
+        students = new BSTMap<Integer, IStudent>();
         events = new BSTMap<Integer, IEvent>();
     }
 
@@ -18,61 +20,49 @@ public class AdvisingSystemPhase2 implements IAdvisingSystemPhase2 {
     @Override
     public Set<IAdvisor> getAdvisors() {
 
-        Set<IAdvisor> advisors = new BSTSet<IAdvisor>();
-        List<Integer> keys = persons.getKeys();
+    Set<IAdvisor> result = new BSTSet<IAdvisor>();
+    List<Integer> keys = advisors.getKeys();
 
-        if (keys.empty()) {
-            return advisors;
-        }
+    if (keys.empty())
+        return result;
 
-        keys.findFirst();
+    keys.findFirst();
 
-        while (true) {
-            IPerson person = persons.get(keys.retrieve());
+    while (true) {
+        result.insert(advisors.get(keys.retrieve()));
 
-            if (person instanceof IAdvisor) { // if advisor
-                advisors.insert((IAdvisor) person);
-            }
+        if (keys.last())
+            break;
 
-            if (keys.last()) {// last elment
-                break;
-            }
-
-            keys.findNext();
-        }
-
-        return advisors;
+        keys.findNext();
     }
+
+    return result;
+}
 
     // Returns all students in the system.
     @Override
-    public Set<IStudent> getStudents() {
+   public Set<IStudent> getStudents() {
 
-        Set<IStudent> students = new BSTSet<IStudent>();
-        List<Integer> keys = persons.getKeys();
+    Set<IStudent> result = new BSTSet<IStudent>();
+    List<Integer> keys = students.getKeys();
 
-        if (keys.empty()) {
-            return students; //return empty
-        }
+    if (keys.empty())
+        return result;
 
-        keys.findFirst();
+    keys.findFirst();
 
-        while (true) {
-            IPerson person = persons.get(keys.retrieve());
+    while (true) {
+        result.insert(students.get(keys.retrieve()));
 
-            if (person instanceof IStudent) {
-                students.insert((IStudent) person);
-            }
+        if (keys.last())
+            break;
 
-            if (keys.last()) {
-                break;
-            }
-
-            keys.findNext();
-        }
-
-        return students;
+        keys.findNext();
     }
+
+    return result;
+}
 
     // Returns all locations in the system.
     @Override
@@ -190,87 +180,41 @@ public class AdvisingSystemPhase2 implements IAdvisingSystemPhase2 {
         return allEvents;
     }
 
-    //===========================================
-    // Adds a new advisor to the system.
-// Returns true if the advisor was added successfully,
-// otherwise returns false if the advisor ID already exists.
     public boolean addAdvisor(IAdvisor advisor) {
-        if (advisor == null) {
-            return false;
-        }
-
-        if (persons.get(advisor.getId()) == null) {
-            return persons.insert(advisor.getId(), advisor);
-        }
-
+            if (advisor == null)
         return false;
+
+    if (advisors.get(advisor.getId()) != null)
+        return false;
+
+    return advisors.insert(advisor.getId(), advisor);
     }
 
-    // Finds an advisor using the advisor ID.
-// Returns the advisor object if it exists, otherwise returns null.
     @Override
     public IAdvisor searchAdvisorById(int advisorId) {
-
-        IPerson person = persons.get(advisorId);
-
-        if (person != null && person instanceof IAdvisor) {
-            return (IAdvisor) person;
-        }
-
-        return null;
+        return advisors.get(advisorId);
     }
 
-// Adds a new student to the system.
-// Returns true if the student was added successfully,
-// otherwise returns false if the ID already exists.
+
     @Override
     public boolean addStudent(IStudent student) {
-        if (student == null) {
-            return false;
-        }
-
-        if (persons.get(student.getId()) == null) {
-            return persons.insert(student.getId(), student);
-        }
-
+           if (student == null)
         return false;
+
+    if (students.get(student.getId()) != null)
+        return false;
+
+    return students.insert(student.getId(), student);
     }
 
     @Override
     public IStudent searchStudentById(int studentId) {
-        IPerson person = persons.get(studentId);
-
-        if (person != null && person instanceof IStudent) {
-            return (IStudent) person;
-        }
-
-        return null;
+          return students.get(studentId);
     }
-//+++++++++++++++++++++++++++++++++++++++++++===
 
-    // Deletes a student and updates all related workshop and meeting data.
-//
-// Effects:
-// - meetings related to the student are removed
-// - the student is removed from workshops
-// - empty workshops are deleted
-//
-// @param studentId student identifier
-// @return true if the student existed and was deleted,
-// otherwise returns false
-// Deletes a student and updates all related workshop and meeting data.
-//
-// Effects:
-// - meetings related to the student are removed
-// - the student is removed from workshops
-// - empty workshops are deleted
-//
-// @param studentId student identifier
-// @return true if the student existed and was deleted,
-// otherwise returns false
     @Override
     public boolean deleteStudent(int studentId) {
-        IStudent studentObject = (IStudent) persons.get(studentId);
+        IStudent studentObject = (IStudent) students.get(studentId);
 
         if (studentObject == null) {
             return false;
@@ -295,7 +239,7 @@ public class AdvisingSystemPhase2 implements IAdvisingSystemPhase2 {
 
                     Integer advisorId = ((Meeting) updatedEvent).getAdvisorId();
 
-                    IAdvisor advisorObject = (Advisor) persons.get(advisorId);
+                    IAdvisor advisorObject = (Advisor) advisors.get(advisorId);
 
                     advisorObject.getSchedule().remove(eventIds.retrieve());
 
@@ -367,19 +311,6 @@ public class AdvisingSystemPhase2 implements IAdvisingSystemPhase2 {
         return locations.get(locationId);
     }
 
-//==============================================================
-// Schedules a meeting between one advisor and one student.
-// The meeting location will be the advisor office.
-//
-// Conditions:
-// - both advisor and student must exist
-// - there must be no time conflict for either one
-//
-// @param timeSlot meeting time slot
-// @param advisorId advisor identifier
-// @param studentId student identifier
-// @return ID of the scheduled meeting
-// @throws SchedulingException if scheduling is unsuccessful
     @Override
     public int scheduleMeeting(ITimeSlot timeSlot, int advisorId, int studentId) throws SchedulingException {
         IAdvisor advisor = searchAdvisorById(advisorId);
@@ -422,21 +353,7 @@ public class AdvisingSystemPhase2 implements IAdvisingSystemPhase2 {
         return id;
     }
 
-    // Schedules a workshop for multiple students and advisors in one location.
-//
-// Conditions:
-// - all students and advisors must exist
-// - the location must exist and be reservable
-// - there must be no schedule conflicts
-// - the location should not already be occupied
-//
-// @param title workshop title
-// @param timeSlot workshop time slot
-// @param locationId location identifier
-// @param advisorIds advisor identifiers
-// @param studentIds student identifiers
-// @return ID of the created workshop
-// @throws SchedulingException if scheduling fails
+
     @Override
     public int scheduleWorkshop(String title, ITimeSlot timeSlot, int locationId,
             int[] advisorIds, int[] studentIds)
@@ -525,12 +442,6 @@ public class AdvisingSystemPhase2 implements IAdvisingSystemPhase2 {
         return workshop.getId();
     }
 
-//-----------------------------------
-// Cancels a meeting using its ID.
-//
-// @param meetingId meeting identifier
-// @return true if the meeting was cancelled successfully,
-// otherwise returns false
     @Override
     public boolean cancelMeeting(int meetingId) {
         IMeeting meetingObject = (Meeting) events.get(meetingId);
@@ -559,13 +470,7 @@ public class AdvisingSystemPhase2 implements IAdvisingSystemPhase2 {
 
         return true;
     }
-//-------------------------------------------
 
-// Cancel a workshop using its ID.
-//
-// @param workshopId workshop identifier
-// @return true if the workshop was removed successfully,
-// otherwise returns false
     @Override
     public boolean cancelWorkshop(int workshopId) {
         IWorkshop workshopObject = (Workshop) events.get(workshopId);
@@ -617,18 +522,7 @@ public class AdvisingSystemPhase2 implements IAdvisingSystemPhase2 {
         return true;
     }
 
-//--------------------------------------------
-    // Adds a student to an existing workshop.
-//
-// Conditions:
-// - both workshop and student must exist
-// - the student must not already be added
-// - there must be no schedule conflict
-// - workshop capacity must not be exceeded
-//
-// @param workshopId workshop identifier
-// @param studentId student identifier
-// @throws SchedulingException if adding the student fails
+
     @Override
     public void addStudentToWorkshop(int workshopId, int studentId)
             throws SchedulingException //no color
@@ -670,16 +564,7 @@ public class AdvisingSystemPhase2 implements IAdvisingSystemPhase2 {
         events.update(workshopId, workshopEvent);
     }
 
-    // Removes a student from a workshop.
-//
-// Conditions:
-// - both student and workshop must exist
-// - the student must already be part of the workshop
-// - if no participants remain, the workshop is cancelled
-//
-// @param workshopId workshop identifier
-// @param studentId student identifier
-// @throws SchedulingException if removal fails
+  
     @Override
     public void removeStudentFromWorkshop(int workshopId, int studentId)
             throws SchedulingException {
@@ -712,19 +597,9 @@ public class AdvisingSystemPhase2 implements IAdvisingSystemPhase2 {
 
             events.update(workshopEvent.getId(), workshopEvent);
         }
-    }// i think wrong
+    }
 
-//======
-    // Adds an advisor to a workshop.
-//
-// Conditions:
-// - both advisor and workshop must exist
-// - the advisor must not already be added
-// - there must be no schedule conflict
-//
-// @param workshopId workshop identifier
-// @param advisorId advisor identifier
-// @throws SchedulingException if adding fails
+
     @Override
     public void addAdvisorToWorkshop(int workshopId, int advisorId)
             throws SchedulingException {
@@ -759,16 +634,6 @@ public class AdvisingSystemPhase2 implements IAdvisingSystemPhase2 {
 
         events.update(advisorId, workshopEvent);
     }
-//--------------------------
-    // Removes an advisor from a workshop.
-//
-// Conditions:
-// - both advisor and workshop must exist
-// - the advisor must already be part of the workshop
-//
-// @param workshopId workshop identifier
-// @param advisorId advisor identifier
-// @throws SchedulingException if removal fails
 
     @Override
     public void removeAdvisorFromWorkshop(int workshopId, int advisorId)
